@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Button, 
-  Card, 
-  Col, 
-  Row, 
+import {
+  Button,
+  Card,
+  Col,
+  Row,
   Container,
   Spinner,
   Alert,
@@ -23,10 +23,8 @@ const PetsForAdoption = () => {
 
     const fetchPets = async () => {
       try {
-        const apiUrl = process.env.NODE_ENV === 'development' 
-          ? 'http://localhost:5000/api/adopt' 
-          : '/api/adopt';
-        
+        const apiUrl = `${process.env.REACT_APP_API_URL}/api/adopt`;
+
         console.log('Fetching from:', apiUrl);
         const response = await fetch(apiUrl, {
           headers: {
@@ -43,7 +41,7 @@ const PetsForAdoption = () => {
         const data = await response.json();
         setPets(data);
         setError(null);
-        
+
       } catch (err) {
         if (err.name !== 'AbortError') {
           console.error('Fetch error:', err);
@@ -89,7 +87,7 @@ const PetsForAdoption = () => {
               <pre className="text-start">{error.details}</pre>
             </details>
           )}
-          <Button 
+          <Button
             variant="primary"
             className="mt-3"
             onClick={() => {
@@ -133,7 +131,7 @@ const PetsForAdoption = () => {
                     Available
                   </Badge>
                 </div>
-                
+
                 <Card.Body className="d-flex flex-column">
                   <div className="mb-3">
                     <Card.Title className="fw-bold">{pet.name || 'Unnamed Pet'}</Card.Title>
@@ -141,9 +139,9 @@ const PetsForAdoption = () => {
                       <div><strong>Breed:</strong> {pet.breed || 'Unknown breed'}</div>
                     </Card.Text>
                   </div>
-                  
-                  <Button 
-                    variant="sunrise-coral" 
+
+                  <Button
+                    variant="sunrise-coral"
                     className="mt-auto align-self-stretch rounded-pill"
                   >
                     Adopt {pet.name || 'this pet'}
