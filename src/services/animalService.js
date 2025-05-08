@@ -1,6 +1,11 @@
 import axios from 'axios';
 
-const BASE_URL = `${process.env.REACT_APP_API_URL}/api/animals`;
+// For development, use localhost:5000 if REACT_APP_API_URL is not set
+const BASE_URL = process.env.NODE_ENV === 'development'
+  ? 'http://localhost:5000/api/animals'
+  : `${process.env.REACT_APP_API_URL || ''}/api/animals`;
+
+console.log('Animal service using BASE_URL:', BASE_URL);
 
 // Get all animals
 export const getAnimals = async () => {
@@ -57,10 +62,5 @@ export const deleteAnimal = async (id) => {
   }
 };
 
-export default {
-  getAnimals,
-  getAnimalById,
-  createAnimal,
-  updateAnimal,
-  deleteAnimal,
-};
+// Don't use default export to avoid circular dependencies
+// Individual named exports are already available

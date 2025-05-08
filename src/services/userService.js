@@ -62,10 +62,5 @@ export const deleteUser = async (id) => {
   }
 };
 
-export default {
-  getUsers,
-  getUserById,
-  createUser,
-  updateUser,
-  deleteUser,
-};
+// Don't use default export to avoid circular dependencies
+// Individual named exports are already available

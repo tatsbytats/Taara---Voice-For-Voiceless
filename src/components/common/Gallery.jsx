@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
-import { Tab, Modal } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
+import { Tab, Modal, Spinner } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import '../../assets/styles/default.css';
+
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
 const galleryStyles = `
 /* Modern gallery with focus on images */
@@ -228,9 +230,69 @@ const staticImages = [
   }
 ];
 
-const GalleryTab = ({ images = staticImages }) => {
+const GalleryTab = ({ images: propImages }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [images, setImages] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch gallery images from API
+  useEffect(() => {
+    const fetchGalleryImages = async () => {
+      try {
+        setLoading(true);
+        // Fix: Use the correct API URL format
+        // API_URL already includes '/api', so we should NOT add it again
+        const galleryUrl = `${API_URL.replace(/\/api$/, '')}/api/gallery`;
+        console.log('Gallery component - Fetching gallery images from:', galleryUrl);
+
+        // Add a timeout to the fetch to prevent hanging
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
+        const response = await fetch(galleryUrl, {
+          signal: controller.signal
+        });
+
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('Gallery component - Data received:', data);
+
+        // Transform API data to match the expected format
+        const transformedData = data.map(item => ({
+          id: item._id,
+          src: item.imageUrl,
+          alt: item.title,
+          caption: item.title,
+          description: item.caption,
+          tags: item.tags || [],
+        }));
+
+        setImages(transformedData);
+        setLoading(false);
+      } catch (err) {
+        console.error('Error fetching gallery images:', err);
+        console.log('Using static images as fallback');
+        setError('Failed to load gallery images. Using default images instead.');
+        setImages(staticImages);
+        setLoading(false);
+      }
+    };
+
+    // If images are provided as props, use them, otherwise fetch from API
+    if (propImages && propImages.length > 0) {
+      setImages(propImages);
+      setLoading(false);
+    } else {
+      fetchGalleryImages();
+    }
+  }, [propImages]);
 
   const handleImageClick = (image) => {
     setSelectedImage(image);
@@ -243,36 +305,56 @@ const GalleryTab = ({ images = staticImages }) => {
       <style>{galleryStyles}</style>
 
       <h2 className="mb-3 text-deep-raspberry fw-bold">Gallery</h2>
-      <p className="mb-4 text-muted">
-        A collection of artwork, comics, and illustrations created exclusively for TAARA by local artists to promote adoption and animal welfare.
-      </p>
+      
 
-      <div className="gallery-grid">
-        {images.map((image) => (
-          <div
-            key={image.id}
-            className="gallery-item"
-            onClick={() => handleImageClick(image)}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => e.key === 'Enter' && handleImageClick(image)}
-          >
-            <div className="image-wrapper">
-              <img
-                src={image.src}
-                alt={image.alt || `Gallery image ${image.id}`}
-                className="gallery-image"
-                loading="lazy"
-              />
-              {image.caption && (
-                <div className="image-overlay">
-                  {image.caption}
-                </div>
-              )}
+      {/* Loading state */}
+      {loading && (
+        <div className="text-center py-5">
+          <Spinner animation="border" variant="deep-raspberry" />
+          <p className="mt-3">Loading gallery images...</p>
+        </div>
+      )}
+
+      {/* Error state with fallback to static images */}
+      {error && (
+        <div className="alert alert-warning mb-4">
+          <p className="mb-0">{error}</p>
+        </div>
+      )}
+
+      {/* Gallery grid */}
+      {!loading && (
+        <div className="gallery-grid">
+          {images.map((image) => (
+            <div
+              key={image.id}
+              className="gallery-item"
+              onClick={() => handleImageClick(image)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => e.key === 'Enter' && handleImageClick(image)}
+            >
+              <div className="image-wrapper">
+                <img
+                  src={image.src}
+                  alt={image.alt || `Gallery image ${image.id}`}
+                  className="gallery-image"
+                  loading="lazy"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = 'https://via.placeholder.com/300x200?text=Image+Not+Found';
+                  }}
+                />
+                {image.caption && (
+                  <div className="image-overlay">
+                    {image.caption}
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       {/* Fullscreen Image Modal */}
       <Modal
@@ -299,6 +381,10 @@ const GalleryTab = ({ images = staticImages }) => {
               src={selectedImage.src}
               alt={selectedImage.alt || 'Enlarged view'}
               className="fullscreen-image"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = 'https://via.placeholder.com/800x600?text=Image+Not+Found';
+              }}
             />
 
             {/* Image info overlay */}
@@ -499,6 +585,10 @@ GalleryTab.propTypes = {
       tags: PropTypes.arrayOf(PropTypes.string),
     })
   ),
+};
+
+GalleryTab.defaultProps = {
+  images: []
 };
 
 export default GalleryTab;

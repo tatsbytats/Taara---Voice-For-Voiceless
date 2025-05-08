@@ -1,5 +1,6 @@
-import React from 'react';
-import { Tab, Card, Row, Col } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
+import { Tab, Card, Row, Col, Spinner, Alert } from 'react-bootstrap';
+import { getOrganizationInfo } from '../../services/organizationService';
 
 const AboutUsTab = () => {
   return (
@@ -22,7 +23,7 @@ const AboutUsTab = () => {
                 <h4 className="mb-0">Our Mission</h4>
               </div>
               <p className="text-muted mb-0">
-                To improve animal welfare through awareness, food, shelter, and fostering compassion. 
+                To improve animal welfare through awareness, food, shelter, and fostering compassion.
                 We create a safe and supportive environment for animals, ensuring the care and respect they deserve.
               </p>
             </Card.Body>
@@ -39,8 +40,8 @@ const AboutUsTab = () => {
                 <h4 className="mb-0">Our History</h4>
               </div>
               <p className="text-muted mb-0">
-                Founded in 2010, we’ve helped over 5,000 animals find loving homes and provided 
-                medical care to thousands more. Our team of dedicated professionals and volunteers 
+                Founded in 2010, we’ve helped over 5,000 animals find loving homes and provided
+                medical care to thousands more. Our team of dedicated professionals and volunteers
                 works tirelessly to make a difference.
               </p>
             </Card.Body>
@@ -96,23 +97,6 @@ const AboutUsTab = () => {
         </Card.Body>
       </Card>
 
-      {/* Call to Action */}
-      <Card className="border-0 bg-light">
-        <Card.Body className="text-center py-4">
-          <h5 className="mb-3">Want to get involved?</h5>
-          <p className="text-muted mb-4">
-            Join our growing community of volunteers or make a donation to help us continue our mission.
-          </p>
-          <div className="d-flex flex-column flex-sm-row justify-content-center gap-3">
-            <button className="btn btn-primary rounded-pill px-4">
-              Volunteer <i className="bi bi-arrow-right ms-2"></i>
-            </button>
-            <button className="btn btn-outline-primary rounded-pill px-4">
-              Donate Now
-            </button>
-          </div>
-        </Card.Body>
-      </Card>
     </Tab.Pane>
   );
 };

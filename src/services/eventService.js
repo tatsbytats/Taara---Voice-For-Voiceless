@@ -62,10 +62,5 @@ export const deleteEvent = async (id) => {
   }
 };
 
-export default {
-  getEvents,
-  getEventById,
-  createEvent,
-  updateEvent,
-  deleteEvent,
-};
+// Don't use default export to avoid circular dependencies
+// Individual named exports are already available

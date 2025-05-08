@@ -20,7 +20,12 @@ const AdminLoginForm = () => {
     }),
     onSubmit: async (values, { setSubmitting, setFieldError }) => {
       try {
-        const res = await axios.post('http://localhost:5000/api/login', values);
+        // For development, use localhost:5000 if REACT_APP_API_URL is not set
+        const apiUrl = process.env.NODE_ENV === 'development'
+          ? 'http://localhost:5000/api/login'
+          : `${process.env.REACT_APP_API_URL || ''}/api/login`;
+
+        const res = await axios.post(apiUrl, values);
         if (res.data.success) {
           localStorage.setItem('token', res.data.token);
           navigate('/dashboard');
@@ -75,7 +80,7 @@ const AdminLoginForm = () => {
                 <div className="invalid-feedback">{formik.errors.password}</div>
               )}
             </div>
-            <button 
+            <button
               className="w-100 btn btn-lg btn-sunrise-coral"
               type="submit"
               disabled={formik.isSubmitting}
@@ -85,7 +90,7 @@ const AdminLoginForm = () => {
             <hr className="my-4" />
             <small className="text-body-secondary">
               Go back to <Link to="/dashboard">User Login</Link>.
-            </small> 
+            </small>
           </form>
         </div>
       </div>

@@ -1,0 +1,137 @@
+/* Redesigned Dashboard Styles */
+
+/* Sidebar styles */
+.sidebar-wrapper {
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+}
+
+.sidebar-wrapper.collapsed .nav-link {
+  justify-content: center;
+  padding: 0.5rem;
+}
+
+/* Timeline styles */
+.timeline-item {
+  position: relative;
+  padding-bottom: 1rem;
+}
+
+.timeline-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 1.25rem;
+  top: 2.5rem;
+  bottom: 0;
+  width: 1px;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.bg-dark .timeline-item:not(:last-child)::after {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Card styles */
+.card {
+  transition: box-shadow 0.2s ease;
+}
+
+/* Stat cards */
+.stat-card {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.stat-card .icon-wrapper {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+}
+
+/* Button styles */
+.btn-icon {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+/* Table styles */
+.table-clean {
+  border-collapse: collapse;
+}
+
+.table-clean th {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+}
+
+.table-clean td, .table-clean th {
+  padding: 1rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.bg-dark .table-clean td, .bg-dark .table-clean th {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Badge styles */
+.badge-outline {
+  background-color: transparent;
+  border: 1px solid;
+}
+
+.badge-outline-success {
+  color: #198754;
+  border-color: #198754;
+}
+
+.badge-outline-warning {
+  color: #ffc107;
+  border-color: #ffc107;
+}
+
+.badge-outline-danger {
+  color: #dc3545;
+  border-color: #dc3545;
+}
+
+.badge-outline-info {
+  color: #0dcaf0;
+  border-color: #0dcaf0;
+}
+
+.bg-dark .badge-outline-success {
+  color: #20c997;
+  border-color: #20c997;
+}
+
+.bg-dark .badge-outline-warning {
+  color: #ffc107;
+  border-color: #ffc107;
+}
+
+.bg-dark .badge-outline-danger {
+  color: #dc3545;
+  border-color: #dc3545;
+}
+
+.bg-dark .badge-outline-info {
+  color: #0dcaf0;
+  border-color: #0dcaf0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 767.98px) {
+  .sidebar-wrapper {
+    width: 100% !important;
+    max-width: 100%;
+  }
+}

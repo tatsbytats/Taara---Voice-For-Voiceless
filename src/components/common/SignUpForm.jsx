@@ -37,7 +37,7 @@ const SignUpForm = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    
+
     if (name.includes('.')) {
       const [parent, child] = name.split('.');
       setFormData(prev => ({
@@ -75,8 +75,13 @@ const SignUpForm = () => {
 
     try {
       const { confirmPassword, agreeTerms, ...dataToSend } = formData;
-      
-      const response = await fetch('/api/register', {
+
+      // For development, use localhost:5000 if REACT_APP_API_URL is not set
+      const apiUrl = process.env.NODE_ENV === 'development'
+        ? 'http://localhost:5000/api/register'
+        : `${process.env.REACT_APP_API_URL || ''}/api/register`;
+
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(dataToSend),
@@ -103,14 +108,14 @@ const SignUpForm = () => {
             <div className="row g-3">
               <div className="col-md-6">
                 <div className="form-floating mb-3">
-                  <input type="text" className="form-control" id="firstName" name="firstName" 
+                  <input type="text" className="form-control" id="firstName" name="firstName"
                     placeholder="First Name" value={formData.firstName} onChange={handleChange} required />
                   <label htmlFor="firstName">First Name</label>
                 </div>
               </div>
               <div className="col-md-6">
                 <div className="form-floating mb-3">
-                  <input type="text" className="form-control" id="lastName" name="lastName" 
+                  <input type="text" className="form-control" id="lastName" name="lastName"
                     placeholder="Last Name" value={formData.lastName} onChange={handleChange} required />
                   <label htmlFor="lastName">Last Name</label>
                 </div>
@@ -118,19 +123,19 @@ const SignUpForm = () => {
             </div>
 
             <div className="form-floating mb-3">
-              <input type="email" className="form-control" id="email" name="email" 
+              <input type="email" className="form-control" id="email" name="email"
                 placeholder="name@example.com" value={formData.email} onChange={handleChange} required />
               <label htmlFor="email">Email Address</label>
             </div>
 
             <div className="form-floating mb-3">
-              <input type="tel" className="form-control" id="phone" name="phone" 
+              <input type="tel" className="form-control" id="phone" name="phone"
                 placeholder="Phone Number" value={formData.phone} onChange={handleChange} required />
               <label htmlFor="phone">Phone Number</label>
             </div>
 
             <div className="form-floating mb-3">
-              <input type="text" className="form-control" id="address" name="address" 
+              <input type="text" className="form-control" id="address" name="address"
                 placeholder="Physical Address" value={formData.address} onChange={handleChange} required />
               <label htmlFor="address">Physical Address</label>
             </div>
@@ -138,14 +143,14 @@ const SignUpForm = () => {
             <div className="row g-3">
               <div className="col-md-6">
                 <div className="form-floating mb-3">
-                  <input type="password" className="form-control" id="password" name="password" 
+                  <input type="password" className="form-control" id="password" name="password"
                     placeholder="Password" value={formData.password} onChange={handleChange} required />
                   <label htmlFor="password">Password</label>
                 </div>
               </div>
               <div className="col-md-6">
                 <div className="form-floating mb-3">
-                  <input type="password" className="form-control" id="confirmPassword" name="confirmPassword" 
+                  <input type="password" className="form-control" id="confirmPassword" name="confirmPassword"
                     placeholder="Confirm Password" value={formData.confirmPassword} onChange={handleChange} required />
                   <label htmlFor="confirmPassword">Confirm Password</label>
                 </div>
@@ -167,9 +172,9 @@ const SignUpForm = () => {
         return (
           <>
             <h4 className="mb-3">Adoption Information</h4>
-            
+
             <div className="form-floating mb-3">
-              <input type="date" className="form-control" id="dateOfBirth" name="dateOfBirth" 
+              <input type="date" className="form-control" id="dateOfBirth" name="dateOfBirth"
                 value={formData.dateOfBirth} onChange={handleChange} required />
               <label htmlFor="dateOfBirth">Date of Birth</label>
             </div>
@@ -177,7 +182,7 @@ const SignUpForm = () => {
             <div className="row g-3">
               <div className="col-md-6">
                 <div className="form-floating mb-3">
-                  <select className="form-select" id="residenceType" name="residenceType" 
+                  <select className="form-select" id="residenceType" name="residenceType"
                     value={formData.residenceType} onChange={handleChange} required>
                     <option value="">Select...</option>
                     {residenceTypes.map((type, index) => (
@@ -189,7 +194,7 @@ const SignUpForm = () => {
               </div>
               <div className="col-md-6">
                 <div className="form-floating mb-3">
-                  <select className="form-select" id="housingStatus" name="housingStatus" 
+                  <select className="form-select" id="housingStatus" name="housingStatus"
                     value={formData.housingStatus} onChange={handleChange} required>
                     <option value="">Select...</option>
                     <option value="own">Own</option>
@@ -204,14 +209,14 @@ const SignUpForm = () => {
             <div className="row g-3 mb-3">
               <div className="col-md-6">
                 <div className="form-floating">
-                  <input type="number" className="form-control" id="adults" name="householdMembers.adults" 
+                  <input type="number" className="form-control" id="adults" name="householdMembers.adults"
                     min="1" value={formData.householdMembers.adults} onChange={handleChange} required />
                   <label htmlFor="adults">Number of Adults</label>
                 </div>
               </div>
               <div className="col-md-6">
                 <div className="form-floating">
-                  <input type="number" className="form-control" id="children" name="householdMembers.children" 
+                  <input type="number" className="form-control" id="children" name="householdMembers.children"
                     min="0" value={formData.householdMembers.children} onChange={handleChange} required />
                   <label htmlFor="children">Number of Children</label>
                 </div>
@@ -219,14 +224,14 @@ const SignUpForm = () => {
             </div>
 
             <div className="form-floating mb-3">
-              <input type="text" className="form-control" id="otherPets" name="householdMembers.otherPets" 
+              <input type="text" className="form-control" id="otherPets" name="householdMembers.otherPets"
                 placeholder="Other pets in your home" value={formData.householdMembers.otherPets} onChange={handleChange} />
               <label htmlFor="otherPets">Other Pets (if any)</label>
             </div>
 
             <div className="form-floating mb-3">
-              <textarea className="form-control" id="petExperience" name="petExperience" 
-                placeholder="Describe your previous experience with pets" style={{ height: '80px' }} 
+              <textarea className="form-control" id="petExperience" name="petExperience"
+                placeholder="Describe your previous experience with pets" style={{ height: '80px' }}
                 value={formData.petExperience} onChange={handleChange} required />
               <label htmlFor="petExperience">Previous Pet Experience</label>
             </div>
@@ -248,7 +253,7 @@ const SignUpForm = () => {
             <h4 className="mb-3">Pet Preferences</h4>
 
             <div className="form-floating mb-3">
-              <select className="form-select" id="petType" name="petType" 
+              <select className="form-select" id="petType" name="petType"
                 value={formData.petType} onChange={handleChange} required>
                 <option value="">Select...</option>
                 {petTypes.map((type, index) => (
@@ -261,7 +266,7 @@ const SignUpForm = () => {
             <div className="row g-3">
               <div className="col-md-4">
                 <div className="form-floating mb-3">
-                  <select className="form-select" id="preferredAge" name="preferredAge" 
+                  <select className="form-select" id="preferredAge" name="preferredAge"
                     value={formData.preferredAge} onChange={handleChange}>
                     <option value="">Select...</option>
                     {agePreferences.map((age, index) => (
@@ -273,7 +278,7 @@ const SignUpForm = () => {
               </div>
               <div className="col-md-4">
                 <div className="form-floating mb-3">
-                  <select className="form-select" id="preferredSize" name="preferredSize" 
+                  <select className="form-select" id="preferredSize" name="preferredSize"
                     value={formData.preferredSize} onChange={handleChange}>
                     <option value="">Select...</option>
                     {sizePreferences.map((size, index) => (
@@ -285,7 +290,7 @@ const SignUpForm = () => {
               </div>
               <div className="col-md-4">
                 <div className="form-floating mb-3">
-                  <input type="text" className="form-control" id="preferredBreed" name="preferredBreed" 
+                  <input type="text" className="form-control" id="preferredBreed" name="preferredBreed"
                     placeholder="Preferred Breed" value={formData.preferredBreed} onChange={handleChange} />
                   <label htmlFor="preferredBreed">Preferred Breed</label>
                 </div>
@@ -293,7 +298,7 @@ const SignUpForm = () => {
             </div>
 
             <div className="form-floating mb-3">
-              <input type="text" className="form-control" id="veterinarianInfo" name="veterinarianInfo" 
+              <input type="text" className="form-control" id="veterinarianInfo" name="veterinarianInfo"
                 placeholder="Veterinarian Reference (optional)" value={formData.veterinarianInfo} onChange={handleChange} />
               <label htmlFor="veterinarianInfo">Veterinarian Reference (optional)</label>
             </div>
@@ -315,7 +320,7 @@ const SignUpForm = () => {
             <h4 className="mb-3">Terms and Conditions</h4>
 
             <div className="form-check mb-3">
-              <input className="form-check-input" type="checkbox" id="agreeTerms" name="agreeTerms" 
+              <input className="form-check-input" type="checkbox" id="agreeTerms" name="agreeTerms"
                 checked={formData.agreeTerms} onChange={handleChange} required />
               <label className="form-check-label" htmlFor="agreeTerms">
                 I agree to the <a href="#">terms and conditions</a>
@@ -323,7 +328,7 @@ const SignUpForm = () => {
             </div>
 
             <div className="form-check mb-3">
-              <input className="form-check-input" type="checkbox" id="subscribeNewsletter" name="subscribeNewsletter" 
+              <input className="form-check-input" type="checkbox" id="subscribeNewsletter" name="subscribeNewsletter"
                 checked={formData.subscribeNewsletter} onChange={handleChange} />
               <label className="form-check-label" htmlFor="subscribeNewsletter">
                 Subscribe to our newsletter for pet adoption updates
@@ -371,7 +376,7 @@ const SignUpForm = () => {
               <form onSubmit={handleSubmit}>
                 {error && <div className="alert alert-danger">{error}</div>}
                 {success && <div className="alert alert-success">{success}</div>}
-                
+
                 {renderSection()}
               </form>
 

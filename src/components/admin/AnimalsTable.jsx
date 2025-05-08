@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Container, Spinner, Alert, Card, Image, Button, Modal, Badge } from 'react-bootstrap';
 import { format } from 'date-fns';
-import { getAnimals } from '../services/animalService'; 
+import { getAnimals } from '../../services/animalService'; 
 
 
 const AnimalsTable = () => {

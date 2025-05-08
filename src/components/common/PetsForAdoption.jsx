@@ -23,7 +23,10 @@ const PetsForAdoption = () => {
 
     const fetchPets = async () => {
       try {
-        const apiUrl = `${process.env.REACT_APP_API_URL}/api/adopt`;
+        // For development, use localhost:5000 if REACT_APP_API_URL is not set
+        const apiUrl = process.env.NODE_ENV === 'development'
+          ? 'http://localhost:5000/api/adopt'
+          : `${process.env.REACT_APP_API_URL || ''}/api/adopt`;
 
         console.log('Fetching from:', apiUrl);
         const response = await fetch(apiUrl, {
@@ -128,7 +131,7 @@ const PetsForAdoption = () => {
                     }}
                   />
                   <Badge bg="success" className="position-absolute top-0 end-0 m-2">
-                    Available
+                    For Adoption
                   </Badge>
                 </div>
 

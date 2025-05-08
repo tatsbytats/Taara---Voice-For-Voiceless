@@ -1,11 +1,16 @@
 // src/components/MainContent.jsx
 import React, { useState, useEffect } from 'react';
 import { Table, Row, Col, Button, Modal, Container, Card, Badge, Image, Form, Spinner } from 'react-bootstrap';
-import { Database, Calendar2, BoxArrowRight, CheckCircle, XCircle, PencilSquare, Trash, Eye, CurrencyDollar, FileEarmarkText, Bell } from 'react-bootstrap-icons';
-import { format } from 'date-fns';
+import { Database, Calendar2, BoxArrowRight, CheckCircle, XCircle, PencilSquare, Trash, Eye, CurrencyDollar, FileEarmarkText, Bell, Person } from 'react-bootstrap-icons';
+import { format, formatDistanceToNow, isToday, isYesterday } from 'date-fns';
 import AnimalReportForm from './AnimalReportForm';
 import EventCalendar from './EventCalendar';
 import AccountDatabase from './AccountDatabase';
+import AdoptionDatabase from './AdoptionDatabase';
+import PetRescue from './PetRescue';
+import PetGallery from './PetGallery';
+import RainbowBridge from './RainbowBridge';
+import AboutOrganization from './AboutOrganization';
 import { getEvents } from '../../services/eventService';
 import { getAnimals, deleteAnimal } from '../../services/animalService';
 
@@ -93,13 +98,8 @@ const AnimalDatabase = ({ darkMode }) => {
       case 'active':
         return (
           <Badge
-            bg={darkMode ? "transparent" : "transparent"}
-            className="d-flex align-items-center gap-1 rounded-pill px-2 py-1"
-            style={{
-              width: 'fit-content',
-              border: darkMode ? '1px solid rgba(25, 135, 84, 0.5)' : '1px solid rgba(25, 135, 84, 0.5)',
-              color: darkMode ? 'rgba(25, 235, 84, 0.9)' : 'rgba(25, 135, 84, 0.9)'
-            }}
+            bg="transparent"
+            className="badge-outline badge-outline-success d-flex align-items-center gap-1 rounded-pill px-2 py-1"
           >
             <CheckCircle size={10} /> Active
           </Badge>
@@ -107,13 +107,8 @@ const AnimalDatabase = ({ darkMode }) => {
       case 'pending':
         return (
           <Badge
-            bg={darkMode ? "transparent" : "transparent"}
-            className="d-flex align-items-center gap-1 rounded-pill px-2 py-1"
-            style={{
-              width: 'fit-content',
-              border: darkMode ? '1px solid rgba(255, 193, 7, 0.5)' : '1px solid rgba(255, 193, 7, 0.5)',
-              color: darkMode ? 'rgba(255, 193, 7, 0.9)' : 'rgba(255, 193, 7, 0.9)'
-            }}
+            bg="transparent"
+            className="badge-outline badge-outline-warning d-flex align-items-center gap-1 rounded-pill px-2 py-1"
           >
             <XCircle size={10} /> Pending
           </Badge>
@@ -124,28 +119,39 @@ const AnimalDatabase = ({ darkMode }) => {
   };
 
   return (
-    <Container fluid className="py-4">
+    <div className="p-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2 className={`fw-bold ${darkMode ? 'text-light' : 'text-deep-raspberry'}`}>Pets</h2>
         <Button
-          variant={darkMode ? "info" : "deep-raspberry"}
+          variant={darkMode ? "outline-info" : "deep-raspberry"}
           onClick={() => setShowFormModal(true)}
           size="sm"
-          className="px-3"
-          style={{ borderRadius: '4px' }}
+          className="d-flex align-items-center gap-2"
         >
-          Add Pet
+          <PencilSquare size={14} />
+          <span>Add Pet</span>
         </Button>
       </div>
 
-      {/* pets count badge */}
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <Badge
-          bg={darkMode ? "info" : "deep-raspberry"}
-          className="rounded-pill px-3 py-2"
-        >
-          {animals.length} Pets
-        </Badge>
+      {/* Stats card */}
+      <div className="row mb-4">
+        <div className="col-md-4">
+          <div className={`card ${darkMode ? 'bg-dark text-light' : 'bg-white'}`}>
+            <div className="card-body p-3">
+              <div className="d-flex justify-content-between align-items-center">
+                <div>
+                  <h6 className={`${darkMode ? 'text-light-emphasis' : 'text-secondary'} mb-1 small text-uppercase`}>
+                    Total Pets
+                  </h6>
+                  <h3 className="fw-bold mb-0">{loading ? '...' : animals.length}</h3>
+                </div>
+                <div className={`rounded p-2 ${darkMode ? 'bg-info bg-opacity-10' : 'bg-deep-raspberry bg-opacity-10'}`}>
+                  <Database size={18} className={darkMode ? 'text-info' : 'text-deep-raspberry'} />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Loading and error states */}
@@ -172,121 +178,106 @@ const AnimalDatabase = ({ darkMode }) => {
 
       {/* Clean table */}
       {!loading && !error && (
-        <div className="table-responsive">
-          <Table
-            hover
-            className={`align-middle ${darkMode ? 'text-light table-dark' : 'table-striped'}`}
-            style={{
-              borderCollapse: 'collapse'
-            }}
-          >
-            <thead>
-              <tr className={darkMode ? 'text-light-emphasis border-bottom border-secondary' : 'text-secondary border-bottom'}>
-                <th className="fw-medium fs-6 ps-3">Pet</th>
-                <th className="fw-medium fs-6">Breed</th>
-                <th className="fw-medium fs-6">Reporter</th>
-                <th className="fw-medium fs-6">Date</th>
-                <th className="fw-medium fs-6">Status</th>
-                <th className="fw-medium fs-6 text-end pe-3">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {animals.length === 0 ? (
-                <tr>
-                  <td colSpan="6" className="text-center py-4">
-                    No pets found in the database.
-                  </td>
-                </tr>
-              ) : (
-                animals.map((animal, index) => (
-              <tr
-                key={animal._id}
-                className={darkMode ? 'border-bottom border-secondary' : index % 2 === 0 ? 'bg-white' : 'bg-light'}
+        <div className="card">
+          <div className={`card-body p-0 ${darkMode ? 'bg-dark text-light' : 'bg-white'}`}>
+            <div className="table-responsive">
+              <Table
+                className={`table-clean align-middle mb-0 ${darkMode ? 'text-light' : ''}`}
               >
-                <td className="ps-3 py-2">
-                  <div className="d-flex align-items-center">
-                    {animal.imageUrl ? (
-                      <Image
-                        src={animal.imageUrl}
-                        width={40}
-                        height={40}
-                        roundedCircle
-                        className="me-3 border"
-                        style={{ objectFit: 'cover' }}
-                        onError={handleImageError}
-                      />
-                    ) : (
-                      <div
-                        className={`rounded-circle d-flex justify-content-center align-items-center me-3 ${darkMode ? 'bg-secondary' : 'bg-light'}`}
-                        style={{ width: 40, height: 40 }}
-                      >
-                        <span className={darkMode ? 'text-white' : 'text-secondary'}>N/A</span>
-                      </div>
-                    )}
-                    <div>
-                      <p className="mb-0 fw-medium">{animal.name}</p>
-                      <p className={`mb-0 small ${darkMode ? 'text-light-emphasis' : 'text-muted'}`}>ID: {animal._id}</p>
-                    </div>
-                  </div>
-                </td>
-                <td className="py-2">{animal.breed}</td>
-                <td className="py-2">{animal.reporter}</td>
-                <td className="py-2">{formatDate(animal.date)}</td>
-                <td className="py-2">
-                  {renderStatusBadge(animal.status)}
-                </td>
-                <td className="text-end pe-3 py-2">
-                  <div className="d-flex gap-2 justify-content-end">
-                    <Button
-                      variant="link"
-                      onClick={() => handleViewDetails(animal)}
-                      className="d-flex align-items-center justify-content-center p-0"
-                      style={{
-                        width: '28px',
-                        height: '28px'
-                      }}
-                    >
-                      <Eye size={15} className={darkMode ? "text-info" : "text-deep-raspberry"} />
-                    </Button>
-                    <Button
-                      variant="link"
-                      onClick={() => handleEdit(animal._id)}
-                      className="d-flex align-items-center justify-content-center p-0"
-                      style={{
-                        width: '28px',
-                        height: '28px'
-                      }}
-                    >
-                      <PencilSquare size={15} className={darkMode ? "text-warning" : "text-warning"} />
-                    </Button>
-                    <Button
-                      variant="link"
-                      onClick={() => handleDelete(animal._id)}
-                      className="d-flex align-items-center justify-content-center p-0"
-                      style={{
-                        width: '28px',
-                        height: '28px'
-                      }}
-                    >
-                      <Trash size={15} className="text-danger" />
-                    </Button>
-                  </div>
-                </td>
-              </tr>
-                ))
-              )}
-            </tbody>
-          </Table>
+                <thead>
+                  <tr className={darkMode ? 'text-light-emphasis' : 'text-secondary'}>
+                    <th className="ps-3">Pet</th>
+                    <th>Breed</th>
+                    <th>Reporter</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th className="text-end pe-3">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {animals.length === 0 ? (
+                    <tr>
+                      <td colSpan="6" className="text-center py-4">
+                        No pets found in the database.
+                      </td>
+                    </tr>
+                  ) : (
+                    animals.map((animal) => (
+                      <tr key={animal._id}>
+                        <td className="ps-3">
+                          <div className="d-flex align-items-center">
+                            {animal.imageUrl ? (
+                              <Image
+                                src={animal.imageUrl}
+                                width={40}
+                                height={40}
+                                roundedCircle
+                                className="me-3 border"
+                                style={{ objectFit: 'cover' }}
+                                onError={handleImageError}
+                              />
+                            ) : (
+                              <div
+                                className={`rounded-circle d-flex justify-content-center align-items-center me-3 ${darkMode ? 'bg-secondary' : 'bg-light'}`}
+                                style={{ width: 40, height: 40 }}
+                              >
+                                <span className={darkMode ? 'text-white' : 'text-secondary'}>N/A</span>
+                              </div>
+                            )}
+                            <div>
+                              <p className="mb-0 fw-medium">{animal.name}</p>
+                              <p className={`mb-0 small ${darkMode ? 'text-light-emphasis' : 'text-muted'}`}>ID: {animal._id}</p>
+                            </div>
+                          </div>
+                        </td>
+                        <td>{animal.breed}</td>
+                        <td>{animal.reporter}</td>
+                        <td>{formatDate(animal.date)}</td>
+                        <td>
+                          {renderStatusBadge(animal.status)}
+                        </td>
+                        <td className="text-end pe-3">
+                          <div className="d-flex gap-2 justify-content-end">
+                            <Button
+                              variant="link"
+                              onClick={() => handleViewDetails(animal)}
+                              className="btn-icon p-1"
+                            >
+                              <Eye size={15} className={darkMode ? "text-info" : "text-deep-raspberry"} />
+                            </Button>
+                            <Button
+                              variant="link"
+                              onClick={() => handleEdit(animal._id)}
+                              className="btn-icon p-1"
+                            >
+                              <PencilSquare size={15} className={darkMode ? "text-warning" : "text-warning"} />
+                            </Button>
+                            <Button
+                              variant="link"
+                              onClick={() => handleDelete(animal._id)}
+                              className="btn-icon p-1"
+                            >
+                              <Trash size={15} className="text-danger" />
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </Table>
+            </div>
+          </div>
         </div>
       )}
 
-      {/* pet Report Form Modal */}
+      {/* Pet Report Form Modal */}
       <Modal
         show={showFormModal}
         onHide={() => setShowFormModal(false)}
         size="lg"
         centered
-        contentClassName={darkMode ? 'text-light' : ''}
+        contentClassName={darkMode ? 'bg-dark text-light' : ''}
       >
         <Modal.Header closeButton className="border-0">
           <Modal.Title className={darkMode ? 'text-light' : 'text-deep-raspberry'}>New Pet</Modal.Title>
@@ -310,7 +301,6 @@ const AnimalDatabase = ({ darkMode }) => {
           </Button>
           <Button
             variant={darkMode ? "info" : "deep-raspberry"}
-            style={{ borderRadius: '4px' }}
           >
             Save
           </Button>
@@ -323,8 +313,7 @@ const AnimalDatabase = ({ darkMode }) => {
         onHide={handleCloseDetailsModal}
         size="lg"
         centered
-        contentClassName={darkMode ? 'text-light' : ''}
-        backdropClassName={darkMode ? 'bg-dark bg-opacity-75' : ''}
+        contentClassName={darkMode ? 'bg-dark text-light' : ''}
       >
         {selectedAnimal && (
           <>
@@ -362,30 +351,34 @@ const AnimalDatabase = ({ darkMode }) => {
                   </div>
                 </Col>
                 <Col md={8}>
-                  <Row className="mb-3">
-                    <Col xs={4} className={darkMode ? 'text-light-emphasis' : 'text-muted'}>ID:</Col>
-                    <Col xs={8}>{selectedAnimal._id}</Col>
-                  </Row>
-                  <Row className="mb-3">
-                    <Col xs={4} className={darkMode ? 'text-light-emphasis' : 'text-muted'}>Breed:</Col>
-                    <Col xs={8}>{selectedAnimal.breed}</Col>
-                  </Row>
-                  <Row className="mb-3">
-                    <Col xs={4} className={darkMode ? 'text-light-emphasis' : 'text-muted'}>Reporter:</Col>
-                    <Col xs={8}>{selectedAnimal.reporter}</Col>
-                  </Row>
-                  <Row className="mb-3">
-                    <Col xs={4} className={darkMode ? 'text-light-emphasis' : 'text-muted'}>Date:</Col>
-                    <Col xs={8}>{formatDate(selectedAnimal.date)}</Col>
-                  </Row>
-                  <Row className="mb-3">
-                    <Col xs={4} className={darkMode ? 'text-light-emphasis' : 'text-muted'}>Address:</Col>
-                    <Col xs={8}>{selectedAnimal.address}</Col>
-                  </Row>
-                  <Row>
-                    <Col xs={4} className={darkMode ? 'text-light-emphasis' : 'text-muted'}>Remarks:</Col>
-                    <Col xs={8}>{selectedAnimal.remarks}</Col>
-                  </Row>
+                  <div className="card h-100">
+                    <div className={`card-body ${darkMode ? 'bg-dark text-light' : ''}`}>
+                      <Row className="mb-3">
+                        <Col xs={4} className={darkMode ? 'text-light-emphasis' : 'text-muted'}>ID:</Col>
+                        <Col xs={8}>{selectedAnimal._id}</Col>
+                      </Row>
+                      <Row className="mb-3">
+                        <Col xs={4} className={darkMode ? 'text-light-emphasis' : 'text-muted'}>Breed:</Col>
+                        <Col xs={8}>{selectedAnimal.breed}</Col>
+                      </Row>
+                      <Row className="mb-3">
+                        <Col xs={4} className={darkMode ? 'text-light-emphasis' : 'text-muted'}>Reporter:</Col>
+                        <Col xs={8}>{selectedAnimal.reporter}</Col>
+                      </Row>
+                      <Row className="mb-3">
+                        <Col xs={4} className={darkMode ? 'text-light-emphasis' : 'text-muted'}>Date:</Col>
+                        <Col xs={8}>{formatDate(selectedAnimal.date)}</Col>
+                      </Row>
+                      <Row className="mb-3">
+                        <Col xs={4} className={darkMode ? 'text-light-emphasis' : 'text-muted'}>Address:</Col>
+                        <Col xs={8}>{selectedAnimal.address}</Col>
+                      </Row>
+                      <Row>
+                        <Col xs={4} className={darkMode ? 'text-light-emphasis' : 'text-muted'}>Remarks:</Col>
+                        <Col xs={8}>{selectedAnimal.remarks}</Col>
+                      </Row>
+                    </div>
+                  </div>
                 </Col>
               </Row>
             </Modal.Body>
@@ -400,7 +393,6 @@ const AnimalDatabase = ({ darkMode }) => {
               <Button
                 variant={darkMode ? "info" : "deep-raspberry"}
                 onClick={() => handleEdit(selectedAnimal._id)}
-                style={{ borderRadius: '4px' }}
               >
                 Edit
               </Button>
@@ -408,13 +400,14 @@ const AnimalDatabase = ({ darkMode }) => {
           </>
         )}
       </Modal>
-    </Container>
+    </div>
   );
 };
 
 const DashboardOverview = ({ darkMode }) => {
   const [events, setEvents] = useState([]);
   const [animals, setAnimals] = useState([]);
+  const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
 
   // Fetch events and animals for the dashboard
@@ -436,6 +429,9 @@ const DashboardOverview = ({ darkMode }) => {
       const animalsData = await getAnimals();
       console.log('Dashboard fetched animals:', animalsData);
       setAnimals(animalsData || []);
+
+      // Generate activity data based on events and animals
+      generateActivityData(animalsData, eventsData);
     } catch (error) {
       console.error('Error fetching data for dashboard:', error);
     } finally {
@@ -443,6 +439,70 @@ const DashboardOverview = ({ darkMode }) => {
     }
   };
 
+  // Generate activity data from events and animals
+  const generateActivityData = (animalsData, eventsData) => {
+    const activityItems = [];
+
+    // Add recent animals as "added to database" activities
+    if (Array.isArray(animalsData) && animalsData.length > 0) {
+      // Sort by date descending and take most recent
+      const recentAnimals = [...animalsData]
+        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .slice(0, 2);
+
+      recentAnimals.forEach(animal => {
+        activityItems.push({
+          id: `animal-${animal._id}`,
+          type: 'animal',
+          title: `${animal.name} added to database`,
+          date: animal.date,
+          icon: <Database size={16} />,
+          iconBg: darkMode ? 'bg-info bg-opacity-10' : 'bg-deep-raspberry bg-opacity-10',
+          iconColor: darkMode ? 'text-info' : 'text-deep-raspberry'
+        });
+      });
+    }
+
+    // Add recent events as "scheduled" activities
+    if (Array.isArray(eventsData) && eventsData.length > 0) {
+      // Sort by date descending and take most recent
+      const recentEvents = [...eventsData]
+        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .slice(0, 2);
+
+      recentEvents.forEach(event => {
+        activityItems.push({
+          id: `event-${event._id}`,
+          type: 'event',
+          title: `${event.title} event scheduled`,
+          date: event.date,
+          icon: <Calendar2 size={16} />,
+          iconBg: 'bg-warning bg-opacity-10',
+          iconColor: 'text-warning'
+        });
+      });
+    }
+
+    // Add a donation activity as an example
+    activityItems.push({
+      id: 'donation-example',
+      type: 'donation',
+      title: 'Donation received',
+      date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
+      icon: <CurrencyDollar size={16} />,
+      iconBg: 'bg-success bg-opacity-10',
+      iconColor: 'text-success'
+    });
+
+    // Sort all activities by date (newest first)
+    const sortedActivities = activityItems.sort((a, b) =>
+      new Date(b.date) - new Date(a.date)
+    );
+
+    setActivities(sortedActivities);
+  };
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     fetchData();
   }, []);
@@ -455,130 +515,162 @@ const DashboardOverview = ({ darkMode }) => {
     }
   };
 
+  // Format relative time for activity items
+  const formatRelativeTime = (dateString) => {
+    try {
+      const date = new Date(dateString);
+
+      if (isToday(date)) {
+        return `Today, ${format(date, 'h:mm a')}`;
+      } else if (isYesterday(date)) {
+        return `Yesterday, ${format(date, 'h:mm a')}`;
+      } else {
+        return formatDistanceToNow(date, { addSuffix: true });
+      }
+    } catch (error) {
+      return 'Unknown date';
+    }
+  };
+
   return (
-    <Container className="py-4">
+    <div className="p-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2 className={`fw-bold ${darkMode ? 'text-light' : 'text-deep-raspberry'}`}>Dashboard</h2>
         <Button
-          variant={darkMode ? "info" : "deep-raspberry"}
+          variant={darkMode ? "outline-info" : "outline-deep-raspberry"}
           size="sm"
-          className="px-3"
-          style={{ borderRadius: '4px' }}
+          className="d-flex align-items-center gap-2"
           onClick={() => {
             setLoading(true);
             fetchData();
           }}
         >
-          Refresh
+          <span className="d-none d-sm-inline">Refresh</span>
         </Button>
       </div>
 
-      <Row className="g-4 mb-4">
-        <Col md={6}>
-          <Card
-            className={`h-100 border-0 ${darkMode ? 'bg-dark text-light' : 'bg-white'}`}
-            style={{
-              borderRadius: '10px',
-              transition: 'transform 0.2s, box-shadow 0.2s',
-              boxShadow: darkMode ? '0 4px 6px rgba(0, 0, 0, 0.4)' : '0 4px 12px rgba(0, 0, 0, 0.05)'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-5px)';
-              e.currentTarget.style.boxShadow = darkMode ?
-                '0 8px 15px rgba(0, 0, 0, 0.5)' :
-                '0 8px 20px rgba(0, 0, 0, 0.1)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = darkMode ?
-                '0 4px 6px rgba(0, 0, 0, 0.4)' :
-                '0 4px 12px rgba(0, 0, 0, 0.05)';
-            }}
-          >
-            <Card.Body className="p-4">
-              <div className="d-flex justify-content-between align-items-center mb-3">
-                <Card.Title className={`${darkMode ? 'text-light-emphasis' : 'text-secondary'} mb-0 fs-6`}>
-                  Pets Registered
-                </Card.Title>
-                <div className={`rounded-circle p-2 ${darkMode ? 'bg-info bg-opacity-10' : 'bg-deep-raspberry bg-opacity-10'}`}>
+      {/* Stats Cards */}
+      <div className="row g-3 mb-4">
+        <div className="col-md-6 col-lg-3">
+          <div className={`card h-100 ${darkMode ? 'bg-dark text-light' : 'bg-white'}`}>
+            <div className="card-body p-3">
+              <div className="d-flex justify-content-between align-items-center">
+                <div>
+                  <h6 className={`${darkMode ? 'text-light-emphasis' : 'text-secondary'} mb-1 small text-uppercase`}>
+                    Pets
+                  </h6>
+                  <h3 className="fw-bold mb-0">{loading ? '...' : animals.length}</h3>
+                </div>
+                <div className={`rounded p-2 ${darkMode ? 'bg-info bg-opacity-10' : 'bg-deep-raspberry bg-opacity-10'}`}>
                   <Database size={18} className={darkMode ? 'text-info' : 'text-deep-raspberry'} />
                 </div>
               </div>
-              <div className="mt-2">
-                <h3 className="fw-bold mb-0">{loading ? '...' : animals.length}</h3>
-                <p className="text-success mb-0 small">
-                  <i className="bi bi-check-circle"></i> Pets in database
-                </p>
-              </div>
-            </Card.Body>
-          </Card>
-        </Col>
+            </div>
+          </div>
+        </div>
 
-        <Col md={6}>
-          <Card
-            className={`h-100 border-0 ${darkMode ? 'bg-dark text-light' : 'bg-white'}`}
-            style={{
-              borderRadius: '10px',
-              transition: 'transform 0.2s, box-shadow 0.2s',
-              boxShadow: darkMode ? '0 4px 6px rgba(0, 0, 0, 0.4)' : '0 4px 12px rgba(0, 0, 0, 0.05)'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-5px)';
-              e.currentTarget.style.boxShadow = darkMode ?
-                '0 8px 15px rgba(0, 0, 0, 0.5)' :
-                '0 8px 20px rgba(0, 0, 0, 0.1)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = darkMode ?
-                '0 4px 6px rgba(0, 0, 0, 0.4)' :
-                '0 4px 12px rgba(0, 0, 0, 0.05)';
-            }}
-          >
-            <Card.Body className="p-4">
-              <div className="d-flex justify-content-between align-items-center mb-3">
-                <Card.Title className={`${darkMode ? 'text-light-emphasis' : 'text-secondary'} mb-0 fs-6`}>
-                  Events This Month
-                </Card.Title>
-                <div className={`rounded-circle p-2 ${darkMode ? 'bg-warning bg-opacity-10' : 'bg-warning bg-opacity-10'}`}>
-                  <Calendar2 size={18} className={darkMode ? 'text-warning' : 'text-warning'} />
+        <div className="col-md-6 col-lg-3">
+          <div className={`card h-100 ${darkMode ? 'bg-dark text-light' : 'bg-white'}`}>
+            <div className="card-body p-3">
+              <div className="d-flex justify-content-between align-items-center">
+                <div>
+                  <h6 className={`${darkMode ? 'text-light-emphasis' : 'text-secondary'} mb-1 small text-uppercase`}>
+                    Events
+                  </h6>
+                  <h3 className="fw-bold mb-0">{loading ? '...' : events.length}</h3>
+                </div>
+                <div className={`rounded p-2 ${darkMode ? 'bg-warning bg-opacity-10' : 'bg-warning bg-opacity-10'}`}>
+                  <Calendar2 size={18} className="text-warning" />
                 </div>
               </div>
-              <div className="mt-2">
-                <h3 className="fw-bold mb-0">{events.length}</h3>
-                <p className="text-warning mb-0 small">
-                  <i className="bi bi-dash-short"></i> Upcoming events
-                </p>
-              </div>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
+            </div>
+          </div>
+        </div>
 
-      <Row className="g-4 mt-2">
-        <Col>
-          <Card
-            className={`border-0 ${darkMode ? 'bg-dark text-light' : 'bg-white'}`}
-            style={{
-              borderRadius: '10px',
-              transition: 'transform 0.2s, box-shadow 0.2s',
-              boxShadow: darkMode ? '0 4px 6px rgba(0, 0, 0, 0.4)' : '0 4px 12px rgba(0, 0, 0, 0.05)'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-5px)';
-              e.currentTarget.style.boxShadow = darkMode ?
-                '0 8px 15px rgba(0, 0, 0, 0.5)' :
-                '0 8px 20px rgba(0, 0, 0, 0.1)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = darkMode ?
-                '0 4px 6px rgba(0, 0, 0, 0.4)' :
-                '0 4px 12px rgba(0, 0, 0, 0.05)';
-            }}
-          >
-            <Card.Body className="p-4">
-              <Card.Title className="mb-3">Upcoming Events</Card.Title>
+        <div className="col-md-6 col-lg-3">
+          <div className={`card h-100 ${darkMode ? 'bg-dark text-light' : 'bg-white'}`}>
+            <div className="card-body p-3">
+              <div className="d-flex justify-content-between align-items-center">
+                <div>
+                  <h6 className={`${darkMode ? 'text-light-emphasis' : 'text-secondary'} mb-1 small text-uppercase`}>
+                    Accounts
+                  </h6>
+                  <h3 className="fw-bold mb-0">12</h3>
+                </div>
+                <div className={`rounded p-2 ${darkMode ? 'bg-success bg-opacity-10' : 'bg-success bg-opacity-10'}`}>
+                  <Person size={18} className="text-success" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="col-md-6 col-lg-3">
+          <div className={`card h-100 ${darkMode ? 'bg-dark text-light' : 'bg-white'}`}>
+            <div className="card-body p-3">
+              <div className="d-flex justify-content-between align-items-center">
+                <div>
+                  <h6 className={`${darkMode ? 'text-light-emphasis' : 'text-secondary'} mb-1 small text-uppercase`}>
+                    Donations
+                  </h6>
+                  <h3 className="fw-bold mb-0">$1,250</h3>
+                </div>
+                <div className={`rounded p-2 ${darkMode ? 'bg-primary bg-opacity-10' : 'bg-primary bg-opacity-10'}`}>
+                  <CurrencyDollar size={18} className="text-primary" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Recent Activity and Upcoming Events */}
+      <div className="row g-3">
+        <div className="col-lg-8">
+          <div className={`card ${darkMode ? 'bg-dark text-light' : 'bg-white'}`}>
+            <div className="card-body p-3">
+              <h5 className="card-title mb-3">Recent Activity</h5>
+
+              {loading ? (
+                <div className="text-center py-3">
+                  <div className="spinner-border spinner-border-sm" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                  <p className="mt-2 small">Loading activity...</p>
+                </div>
+              ) : activities.length === 0 ? (
+                <p className="text-center py-3">No recent activity found.</p>
+              ) : (
+                <div className="timeline">
+                  {activities.map((activity, index) => (
+                    <div
+                      key={activity.id}
+                      className={`timeline-item ${index < activities.length - 1 ? 'pb-3 mb-3 border-bottom' : ''}`}
+                    >
+                      <div className="d-flex">
+                        <div className={`rounded-circle p-2 me-3 ${activity.iconBg}`}>
+                          {activity.icon && React.cloneElement(activity.icon, { className: activity.iconColor })}
+                        </div>
+                        <div>
+                          <p className="mb-0 fw-medium">{activity.title}</p>
+                          <p className={`mb-0 small ${darkMode ? 'text-light-emphasis' : 'text-muted'}`}>
+                            {formatRelativeTime(activity.date)}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="col-lg-4">
+          <div className={`card ${darkMode ? 'bg-dark text-light' : 'bg-white'}`}>
+            <div className="card-body p-3">
+              <h5 className="card-title mb-3">Upcoming Events</h5>
+
               {loading ? (
                 <div className="text-center py-3">
                   <div className="spinner-border spinner-border-sm" role="status">
@@ -593,7 +685,7 @@ const DashboardOverview = ({ darkMode }) => {
                   {events.map(event => (
                     <div
                       key={event._id}
-                      className={`p-3 mb-3 rounded ${darkMode ? 'bg-dark' : 'bg-light'}`}
+                      className={`p-3 mb-2 rounded ${darkMode ? 'bg-dark' : 'bg-light'}`}
                       style={{ border: darkMode ? '1px solid rgba(255,255,255,0.05)' : '1px solid rgba(0,0,0,0.05)' }}
                     >
                       <div className="d-flex justify-content-between">
@@ -603,16 +695,16 @@ const DashboardOverview = ({ darkMode }) => {
                         </span>
                       </div>
                       <h6 className="mt-2 mb-1">{event.title}</h6>
-                      <p className="small text-secondary mb-0">{event.time}</p>
+                      <p className={`small ${darkMode ? 'text-light-emphasis' : 'text-muted'} mb-0`}>{event.time}</p>
                     </div>
                   ))}
                 </div>
               )}
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-    </Container>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
@@ -1088,6 +1180,16 @@ const MainContent = ({ activeView, darkMode }) => {
       return <AccountingDatabase darkMode={darkMode} />;
     case 'calendar':
       return <EventCalendar darkMode={darkMode} />;
+    case 'adoption':
+      return <AdoptionDatabase darkMode={darkMode} />;
+    case 'rescue':
+      return <PetRescue darkMode={darkMode} />;
+    case 'gallery':
+      return <PetGallery darkMode={darkMode} />;
+    case 'rainbow':
+      return <RainbowBridge darkMode={darkMode} />;
+    case 'aboutus':
+      return <AboutOrganization darkMode={darkMode} />;
     case 'settings':
       return <Settings darkMode={darkMode} />;
     case 'logout':

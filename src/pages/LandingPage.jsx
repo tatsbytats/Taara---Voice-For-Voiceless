@@ -7,8 +7,10 @@ import {
     Container,
     Offcanvas,
     Button,
-    Card
+    Card,
+    Spinner
 } from 'react-bootstrap';
+
 import {
     Heart,
     House,
@@ -31,10 +33,11 @@ import PetsForAdoption from '../components/common/PetsForAdoption';
 import DonationModal from '../components/common/DonationModal';
 import AnimalWelfareLaw from '../components/common/AnimalWelfareLaw';
 import GalleryTab from '../components/common/Gallery';
-import AboutUsTab from '../components/common/AboutUsTab';
+import AboutUsTab from '../components/common/AboutUsTabNew';
 
-import RescueTab from '../components/user/RescueTab';
+import RescueTab from '../components/common/RescueTab';
 import MainNavbar from '../components/common/MainNavbar';
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
 const LandingPage = () => {
     const [showDonationModal, setShowDonationModal] = useState(false);
@@ -61,17 +64,50 @@ const LandingPage = () => {
         return () => window.removeEventListener('resize', handleResize);
     }, [windowWidth, showSidebar]);
 
-    // Sample data
-    const galleryImages = [
-        { id: 1, src: 'https://images.pexels.com/photos/326012/pexels-photo-326012.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1', alt: 'Linny' },
-        { id: 2, src: 'https://images.pexels.com/photos/3387169/pexels-photo-3387169.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1', alt: 'Tuck' },
-        { id: 3, src: 'https://images.pexels.com/photos/162140/duckling-birds-yellow-fluffy-162140.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1', alt: 'Ming-ming' },
-        { id: 4, src: 'https://images.pexels.com/photos/50577/hedgehog-animal-baby-cute-50577.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1', alt: 'Hedgie' },
-        { id: 5, src: 'https://images.pexels.com/photos/326012/pexels-photo-326012.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1', alt: 'Linny' },
-        { id: 6, src: 'https://images.pexels.com/photos/3387169/pexels-photo-3387169.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1', alt: 'Tuck' },
-        { id: 7, src: 'https://images.pexels.com/photos/162140/duckling-birds-yellow-fluffy-162140.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1', alt: 'Ming-ming' },
-        { id: 8, src: 'https://images.pexels.com/photos/50577/hedgehog-animal-baby-cute-50577.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1', alt: 'Hedgie' },
-    ];
+    // Gallery images state
+    const [galleryImages, setGalleryImages] = useState([]);
+    const [galleryLoading, setGalleryLoading] = useState(true);
+    const [galleryError, setGalleryError] = useState(null);
+
+    // Fetch gallery images from API
+    useEffect(() => {
+        const fetchGalleryImages = async () => {
+            try {
+                setGalleryLoading(true);
+                // Fix: Use the correct API URL format
+                const galleryUrl = `${API_URL.replace(/\/api$/, '')}/api/gallery`;
+                const response = await fetch(galleryUrl);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                // Transform API data to match the expected format for the Gallery component
+                const transformedData = data.map(item => ({
+                    id: item._id,
+                    src: item.imageUrl,
+                    alt: item.title,
+                    caption: item.title,
+                    description: item.caption,
+                    tags: item.tags || [],
+                }));
+
+                setGalleryImages(transformedData);
+                setGalleryLoading(false);
+            } catch (err) {
+                console.error('Error fetching gallery images:', err);
+                setGalleryError('Failed to load gallery images.');
+                setGalleryLoading(false);
+
+                // Fallback to empty array if there's an error
+                setGalleryImages([]);
+            }
+        };
+
+        fetchGalleryImages();
+    }, []);
 
 
 
@@ -216,7 +252,24 @@ const LandingPage = () => {
                             {/* Mobile Tab Header removed to keep only h2 headers */}
 
                             <Tab.Content>
-                                <GalleryTab images={galleryImages} />
+                                {/* Gallery Tab - Pass loading state to GalleryTab */}
+                                {galleryLoading ? (
+                                    <Tab.Pane eventKey="Gallery" className="py-4 px-3">
+                                        <div className="text-center py-5">
+                                            <Spinner animation="border" variant="deep-raspberry" />
+                                            <p className="mt-3">Loading gallery images...</p>
+                                        </div>
+                                    </Tab.Pane>
+                                ) : galleryError ? (
+                                    <Tab.Pane eventKey="Gallery" className="py-4 px-3">
+                                        <div className="alert alert-warning">
+                                            {galleryError}
+                                        </div>
+                                        <GalleryTab />
+                                    </Tab.Pane>
+                                ) : (
+                                    <GalleryTab images={galleryImages} />
+                                )}
 
                                 {/* For Adoption Tab */}
                                 <Tab.Pane eventKey="ForAdoption" className='scrollable-tab-pane'>
