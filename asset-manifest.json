@@ -1,16 +1,16 @@
 {
   "files": {
     "main.css": "/Taara---Voice-For-Voiceless/static/css/main.c8e7c0e2.css",
-    "main.js": "/Taara---Voice-For-Voiceless/static/js/main.1906d8c8.js",
+    "main.js": "/Taara---Voice-For-Voiceless/static/js/main.b7932c07.js",
     "static/js/453.258b012d.chunk.js": "/Taara---Voice-For-Voiceless/static/js/453.258b012d.chunk.js",
     "static/media/logo.png": "/Taara---Voice-For-Voiceless/static/media/logo.8bf8fbe7a63ccd16dbf6.png",
     "index.html": "/Taara---Voice-For-Voiceless/index.html",
     "main.c8e7c0e2.css.map": "/Taara---Voice-For-Voiceless/static/css/main.c8e7c0e2.css.map",
-    "main.1906d8c8.js.map": "/Taara---Voice-For-Voiceless/static/js/main.1906d8c8.js.map",
+    "main.b7932c07.js.map": "/Taara---Voice-For-Voiceless/static/js/main.b7932c07.js.map",
     "453.258b012d.chunk.js.map": "/Taara---Voice-For-Voiceless/static/js/453.258b012d.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.c8e7c0e2.css",
-    "static/js/main.1906d8c8.js"
+    "static/js/main.b7932c07.js"
   ]
 }
