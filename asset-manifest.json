@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "/Taara---Voice-For-Voiceless/static/css/main.9e92306c.css",
-    "main.js": "/Taara---Voice-For-Voiceless/static/js/main.7f53c2b9.js",
+    "main.css": "/Taara---Voice-For-Voiceless/static/css/main.c8e7c0e2.css",
+    "main.js": "/Taara---Voice-For-Voiceless/static/js/main.1906d8c8.js",
     "static/js/453.258b012d.chunk.js": "/Taara---Voice-For-Voiceless/static/js/453.258b012d.chunk.js",
     "static/media/logo.png": "/Taara---Voice-For-Voiceless/static/media/logo.8bf8fbe7a63ccd16dbf6.png",
     "index.html": "/Taara---Voice-For-Voiceless/index.html",
-    "main.9e92306c.css.map": "/Taara---Voice-For-Voiceless/static/css/main.9e92306c.css.map",
-    "main.7f53c2b9.js.map": "/Taara---Voice-For-Voiceless/static/js/main.7f53c2b9.js.map",
+    "main.c8e7c0e2.css.map": "/Taara---Voice-For-Voiceless/static/css/main.c8e7c0e2.css.map",
+    "main.1906d8c8.js.map": "/Taara---Voice-For-Voiceless/static/js/main.1906d8c8.js.map",
     "453.258b012d.chunk.js.map": "/Taara---Voice-For-Voiceless/static/js/453.258b012d.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.9e92306c.css",
-    "static/js/main.7f53c2b9.js"
+    "static/css/main.c8e7c0e2.css",
+    "static/js/main.1906d8c8.js"
   ]
 }
