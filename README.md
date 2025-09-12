@@ -43,29 +43,57 @@ Build Taara—Voice-for-Voiceless from the source and install dependencies:
 
 Clone the repository:
 
-git clone [https://github.com/tabish/Taara--Voice-for-Voiceless](https://github.com/tabish/Taara--Voice-for-Voiceless)
+<div style="position: relative;">
+<pre style="background-color: #f1f1f1; padding: 10px; border-radius: 5px;"><code id="code-1">git clone https://www.google.com/search?q=https://github.com/tabish/Taara--Voice-for-Voiceless</code></pre>
+<button onclick="copyToClipboard('code-1')" style="position: absolute; top: 10px; right: 10px; background-color: #007bff; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">Copy</button>
+</div>
 
 Navigate to the project directory:
 
-cd Taara--Voice-for-Voiceless
+<div style="position: relative;">
+<pre style="background-color: #f1f1f1; padding: 10px; border-radius: 5px;"><code id="code-2">cd Taara--Voice-for-Voiceless</code></pre>
+<button onclick="copyToClipboard('code-2')" style="position: absolute; top: 10px; right: 10px; background-color: #007bff; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">Copy</button>
+</div>
 
 Install the dependencies:
 Using npm:
 
-npm install
+<div style="position: relative;">
+<pre style="background-color: #f1f1f1; padding: 10px; border-radius: 5px;"><code id="code-3">npm install</code></pre>
+<button onclick="copyToClipboard('code-3')" style="position: absolute; top: 10px; right: 10px; background-color: #007bff; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">Copy</button>
+</div>
 
 Usage
 Run the project with:
 
 Using npm:
 
-npm start
+<div style="position: relative;">
+<pre style="background-color: #f1f1f1; padding: 10px; border-radius: 5px;"><code id="code-4">npm start</code></pre>
+<button onclick="copyToClipboard('code-4')" style="position: absolute; top: 10px; right: 10px; background-color: #007bff; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">Copy</button>
+</div>
 
 Testing
 Taara--Voice-for-Voiceless uses the [Jest_Framework] test framework. Run the test suite with:
 
 Using npm:
 
-npm test
+<div style="position: relative;">
+<pre style="background-color: #f1f1f1; padding: 10px; border-radius: 5px;"><code id="code-5">npm test</code></pre>
+<button onclick="copyToClipboard('code-5')" style="position: absolute; top: 10px; right: 10px; background-color: #007bff; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">Copy</button>
+</div>
+
+<script>
+function copyToClipboard(elementId) {
+var copyText = document.getElementById(elementId).innerText;
+var tempInput = document.createElement("textarea");
+tempInput.value = copyText;
+document.body.appendChild(tempInput);
+tempInput.select();
+document.execCommand("copy");
+document.body.removeChild(tempInput);
+alert("Copied the text: " + copyText);
+}
+</script>
 
 Return
